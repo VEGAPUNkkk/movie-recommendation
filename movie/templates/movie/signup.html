@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'movie/css/styles.css' %}">
+</head>
+<body class="bg-gray-900 h-screen flex justify-center items-center">
+
+  <!-- Signup Form Container -->
+  <div class="bg-gray-800 shadow-xl rounded-lg p-8 max-w-md w-full">
+    {% if messages %}
+      {% for message in messages %}
+          <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+              <p class="block text-l font-semibold text-gray-100 mb-2">{{ message }}</p>
+          </div>
+      {% endfor %}
+    {% endif %}
+    <h2 class="text-3xl font-bold text-center mb-6" style="color: #A91D3A;">Sign Up</h2>
+    
+    <form method="POST">
+      {% csrf_token %}
+      <!-- Username -->
+      <div class="mb-4">
+        <label for="username" class="block text-l font-semibold text-gray-100 mb-2">Username</label>
+        {{ form.username }}
+      </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label for="email" class="block text-l font-semibold text-gray-100 mb-2">Email</label>
+        {{ form.email}}
+      </div>
+
+      <!-- Password -->
+      <div class="mb-6">
+        <label for="password" class="block text-l font-semibold text-gray-100 mb-2">Password</label>
+        {{ form.password}}
+      </div>
+
+      <!-- Signup Button -->
+      <button type="submit" class="w-full bg-[#A91D3A] hover:bg-[#9c1b35] text-white font-semibold py-3 px-4 rounded-lg transition duration-300">Sign Up</button>
+    </form>
+
+    <!-- Already have an account? -->
+    <p class="text-center text-gray-700 mt-6">
+      Already have an account? 
+      <a href="{% url 'login' %}" class="font-semibold" style="color: #A91D3A;">Login</a>
+    </p>
+  </div>
+
+</body>
+</html>

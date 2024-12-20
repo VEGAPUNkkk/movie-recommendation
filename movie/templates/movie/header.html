@@ -1,0 +1,241 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#A91D3A] min-h-screen h-full">
+  <!-- Wrapper for the layout -->
+  <div class="flex h-full">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed z-40 w-64 bg-gray-900 text-white min-h-screen p-5 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+      <button class="block md:hidden mb-4 text-white" onclick="toggleSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <a href="{% url 'index' %}"><img src="{% static 'movie/image/logo.png' %}" alt="movie logo"></a>
+      
+      <!-- Group 1: Home, Preferences, Random -->
+      <nav>
+        <ul class="mb-6 mt-14">
+          <li class="mb-3">
+            <a href="{% url 'index' %}" class="text-lg hover:text-gray-500">Home</a>
+          </li>
+          <!-- Preferences Modal Trigger -->
+          <li class="mb-3">
+            <a href="#" class="text-lg flex justify-between items-center" onclick="togglePreferencesModal()">Preferences
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+              </svg>
+              
+            </a>
+          </li>
+          
+          <!-- Preferences Modal (Responsive: inside sidebar for small screens, outside for larger) -->
+          <form action="{% url 'recommend_by_genre' %}" method="POST">
+            {% csrf_token %}
+            <div id="preferencesModal" class="fixed inset-0 hidden flex justify-center items-start z-50">
+              <!-- Modal container: positioned inside the sidebar for small screens, to the right for medium screens and larger -->
+              <div class="mt-32 bg-gray-900 w-full md:w-96 rounded-lg shadow-lg p-6 absolute md:ml-72 md:mt-32 md:left-auto md:right-5" style="left: 0rem;">
+                <h3 class="text-2xl font-bold mb-4 text-white">Select Your Preferences</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4"> <!-- Responsive grid: 2 columns on small, 3 on medium+ -->
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="action" class="mr-2"> Action
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="comedy" class="mr-2"> Comedy
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="drama" class="mr-2"> Drama
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="horror" class="mr-2"> Horror
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="sci-fi" class="mr-2"> Sci-Fi
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="thriller" class="mr-2"> Thriller
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="romance" class="mr-2"> Romance
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="fantasy" class="mr-2"> Fantasy
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="animation" class="mr-2"> Animation
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="mystery" class="mr-2"> Mystery
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="documentary" class="mr-2"> Documentary
+                  </label>
+                  <label class="flex items-center text-white">
+                    <input type="checkbox" name="preferences" value="adventure" class="mr-2"> Adventure
+                  </label>
+                </div>
+                <div class="mt-4 flex justify-end">
+                  <button class="bg-gray-900 text-white px-4 py-2 rounded-lg mr-2" onclick="closePreferencesModal()">Suggest</button>
+                  <!-- <button class="bg-gray-500 text-white px-4 py-2 rounded-lg" onclick="closePreferencesModal()">Cancel</button> -->
+                </div>
+              </div>
+            </div>
+          </form>
+          <li class="mb-3">
+            <a href="{% url 'recommend' %}" class="text-lg hover:text-gray-500">Recommend</a>
+          </li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-24">Track Your Shows</h3>
+
+        <!-- Group 2: Watchlist, Plan to Watch, On Hold, Dropped -->
+        <ul class="ml-2 mt-2 p-2">
+          <li class="mb-3">
+            <a href="{% url 'watchlist' 'watching' %}" class="text-lg hover:text-gray-500">Watching</a>
+          </li>
+          <li class="mb-3">
+            <a href="{% url 'watchlist' 'plan' %}" class="text-lg hover:text-gray-500">Plan to Watch</a>
+          </li>
+          <li class="mb-3">
+            <a href="{% url 'watchlist' 'hold' %}" class="text-lg hover:text-gray-500">On Hold</a>
+          </li>
+          <li class="mb-3">
+            <a href="{% url 'watchlist' 'drop' %}" class="text-lg hover:text-gray-500">Dropped</a>
+          </li>
+          <li class="mb-3">
+            <a href="{% url 'watchlist' 'completed' %}" class="text-lg hover:text-gray-500">Completed</a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <div class="flex-1 p-6 ml-0 md:ml-64 bg-[#A91D3A] text-white">
+      <!-- Header -->
+      <header class="flex flex-col md:flex-row justify-between items-center bg-white text-black p-5 shadow-xl" style="background-color: #9c1b35;">
+        <div>
+          <button class="md:hidden bg-gray-900 text-white px-5 py-2 mr-2 rounded-lg" onclick="toggleSidebar()">Menu</button>
+        </div>
+        <div class="flex flex-col md:flex-row items-center w-full justify-between">
+          <div class="flex flex-row items-center w-full max-w-lg m-2 pr-2">
+            <form class="flex w-full items-center space-x-3" method="POST" action="{% url 'get_movie' %}">
+              {% csrf_token %}
+              <input 
+              type="text" 
+              name="search_movie"
+              class="w-full border border-gray-900 rounded-lg p-2 mr-3 text-white placeholder-gray-400 focus:border-gray-600 focus:outline-none" 
+              placeholder="Search..." 
+              style="background-color: #0f172a;"
+            >
+            <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-lg">Search</button>
+            </form>
+          </div>
+          
+          <div class="relative ml-2 flex items-center space-x-4">
+            {% if user.is_authenticated %}
+            <div>
+                <button type="button" class="relative flex rounded-full bg-gray-800 hover:bg-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 focus:ring-offset-gray-400" id="user-menu-button" aria-expanded="false" aria-haspopup="true" onclick="toggleDropdown1()">
+                    <span class="absolute -inset-1.5"></span>
+                    <span class="sr-only">Open user menu</span>
+                    <img class="h-9 w-9 rounded-full p-1" src="{% static 'movie/image/profile.png' %}" alt="profile photo">
+                </button>
+            </div>
+            {% else %}
+            <div class="flex space-x-3">
+              <!-- Login button -->
+              <a class="inline-flex justify-center rounded-lg text-sm font-semibold py-2.5 px-4 bg-gray-900 text-white hover:bg-gray-500" href="{% url 'login' %}">Login</a>
+      
+              <!-- Signup button -->
+              <a class="inline-flex justify-center rounded-lg text-sm font-semibold py-2.5 px-4 bg-gray-900 text-white hover:bg-gray-500" href="{% url 'signup' %}">Signup</a>
+            </div>
+            {% endif %}
+            <!-- Dropdown Menu -->
+            <div id="dropdownMenu1" class="hidden absolute right-0 z-10 mt-44 w-48 origin-top-right rounded-md bg-gray-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-gray-900" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                <a href="#" class="block px-4 py-2 text-sm text-gray-50 hover:bg-gray-500" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-50 hover:bg-gray-500" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
+                <a href="{% url 'logOut' %}" class="block px-4 py-2 text-sm text-gray-50 hover:bg-gray-500" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="mt-10">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Toggle sidebar visibility
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    }
+
+    // Toggle dropdown for Preferences
+    function toggleDropdown() {
+      document.getElementById('genreDropdown').classList.toggle('hidden');
+    }
+
+    function toggleDropdown1() {
+        var dropdownMenu = document.getElementById('dropdownMenu1');
+        var isHidden = dropdownMenu.classList.contains('hidden');
+        
+        // Toggle visibility
+        dropdownMenu.classList.toggle('hidden', !isHidden);
+        
+        // Optionally update aria-expanded attribute
+        var button = document.getElementById('user-menu-button');
+        button.setAttribute('aria-expanded', !isHidden);
+    }
+
+    // Optional: Close the dropdown if clicking outside
+    window.onclick = function(event) {
+        if (!event.target.matches('#user-menu-button')) {
+            var dropdowns = document.getElementsByClassName('dropdown-menu');
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (!openDropdown.classList.contains('hidden')) {
+                    openDropdown.classList.add('hidden');
+                }
+            }
+        }
+    }
+
+    // Toggle tick mark when a genre is clicked
+    document.querySelectorAll('.genre-option').forEach(item => {
+      item.addEventListener('click', function() {
+        const tick = this.nextElementSibling;
+        tick.classList.toggle('hidden');
+      });
+    });
+
+    // Toggle Preferences Modal visibility
+  function togglePreferencesModal() {
+    document.getElementById('preferencesModal').classList.toggle('hidden');
+  }
+
+  // Close the modal
+  function closePreferencesModal() {
+    document.getElementById('preferencesModal').classList.add('hidden');
+  }
+
+  // Optional: Close the modal if clicking outside
+  window.onclick = function(event) {
+    var modal = document.getElementById('preferencesModal');
+    if (event.target == modal) {
+      modal.classList.add('hidden');
+    }
+  }
+  </script>
+</body>
+</html>

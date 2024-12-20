@@ -1,0 +1,72 @@
+{% extends 'movie/header.html' %}
+
+{% block content %}
+{% if card %}
+    <div class="flex flex-wrap justify-center gap-4">
+        <!-- Card starts here -->
+        <div class="w-full sm:w-96 bg-gray-900 shadow-md rounded-lg overflow-hidden sm:mx-0 mx-4">
+            <!-- Top Section (60%) -->
+            <div class="flex flex-col sm:flex-row">
+                <!-- Left Part: Movie Poster -->
+                <div class="sm:w-1/2 w-full h-40 sm:h-auto">
+                    <img src="{{ card.poster_path }}" alt="Movie Poster" class="w-full h-full object-cover">
+                </div>
+                
+                <!-- Right Part: Movie Info -->
+                <div class="sm:w-1/2 w-full p-4 flex flex-col justify-between">
+                    <!-- Movie Title, Rating, and Release Date -->
+                    <div class="mb-2 sm:mb-0">
+                        <h2 class="text-base sm:text-lg font-bold text-gray-100">{{ card.title }}</h2>
+                        <p class="text-xs sm:text-sm text-gray-200">Release Date: {{ card.release_date }}</p>
+                        <p class="mt-1 text-yellow-400 text-xs sm:text-sm font-semibold">★ {{ card.rating }}</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-wrap items-center gap-1 mt-2 sm:mt-3">
+                        <a href="{% url 'add_to_list' card.id 'watching'%}">
+                            <button class="bg-blue-500 hover:bg-blue-600 text-gray-100 text-xs px-2 py-1 rounded">Watching</button>
+                        </a>
+                        <a href="{% url 'add_to_list' card.id 'plan'%}">
+                            <button class="bg-green-500 hover:bg-green-600 text-gray-100 text-xs px-2 py-1 rounded">Plan</button>
+                        </a>
+                        <a href="{% url 'add_to_list' card.id 'drop'%}">
+                            <button class="bg-gray-700 hover:bg-gray-600 text-gray-100 text-xs px-2 py-1 rounded">Dropped</button>
+                        </a>
+                        <a href="{% url 'add_to_list' card.id 'hold'%}">
+                            <button class="bg-yellow-500 hover:bg-yellow-600 text-gray-100 text-xs px-2 py-1 rounded">On Hold</button>
+                        </a>
+                        <a href="{% url 'add_to_list' card.id 'completed'%}">
+                            <button class="bg-purple-500 hover:bg-purple-600 text-gray-100 text-xs px-2 py-1 rounded">Completed</button>
+                        </a>
+                        <a href="{{ card.link }}" class="text-blue-400 hover:underline text-xs">Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section (40%) -->
+            <div class="p-4 hidden sm:block">
+                <p class="text-sm text-gray-200 line-clamp-3">{{ card.overview }}</p>
+            </div>
+        </div>
+        <!-- Repeat for other movie cards -->
+    </div>
+    <div class="flex flex-wrap justify-center gap-2 mt-3">
+        <a href="{% url 'fetch' card.id 'prev' %}">
+            <button type="button" class="text-white bg-gradient-to-r from-[#E3A008] via-[#E3A008] to-[#E3A008] hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-500 dark:focus:ring-yellow-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Prev</button>
+        </a>
+        <a href="{% url 'fetch' card.id 'next' %}">
+            <button type="button" class="text-white bg-gradient-to-r from-[#E3A008] via-[#E3A008] to-[#E3A008] hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-500 dark:focus:ring-yellow-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Next</button>
+        </a>
+    </div>
+    {% else %}
+    <h3 class="text-xl text-center">Please search a valid movie name.</h3>
+{% endif %}
+{% if messages %}
+      {% for message in messages %}
+          <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+              <p class="block text-l font-semibold text-gray-100 mb-2 text-center">{{ message }}</p>
+          </div>
+      {% endfor %}
+    {% endif %}
+
+{% endblock %}

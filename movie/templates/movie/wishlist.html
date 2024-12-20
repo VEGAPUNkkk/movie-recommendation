@@ -1,0 +1,85 @@
+{% extends 'movie/header.html' %}
+
+{% block content %}
+<h3 class="text-3xl text-center text-gray-900 font-style: italic">{{ type }}</h3>
+{% if cards %}
+<table class="w-full table-auto border-collapse">
+    <tbody>
+    <tr class="grid grid-cols-1 sm:table-row sm:grid-cols-2 gap-4">
+        {% for card in cards %}
+        <td class="p-4">
+            <!-- Card Component -->
+            <div class="relative w-full sm:w-96 bg-gray-900 shadow-md rounded-lg overflow-hidden">
+                
+                <!-- 'x' Button to Remove from Watchlist -->
+                <a href="{% url 'remove_from_watchlist' card.mid %}" class="absolute top-2 right-2 text-gray-400 hover:text-red-500">
+                    <button class="text-sm font-semibold">&times;</button>
+                </a>
+
+                <!-- Top Section (60%) -->
+                <div class="flex flex-col sm:flex-row">
+                    <!-- Left Part: Movie Poster -->
+                    <div class="sm:w-1/2 w-full h-40 sm:h-auto">
+                        <img src="{{ card.poster_path }}" alt="Movie Poster" class="w-full h-full object-cover">
+                    </div>
+
+                    <!-- Right Part: Movie Info -->
+                    <div class="sm:w-1/2 w-full p-4 flex flex-col justify-between">
+                        <!-- Movie Title, Rating, and Release Date -->
+                        <div class="mb-2 sm:mb-0">
+                            <h2 class="text-base sm:text-lg font-bold text-gray-100">{{ card.title }}</h2>
+                            <p class="text-xs sm:text-sm text-gray-200">Release Date: {{ card.release_date }}</p>
+                            <p class="mt-1 text-yellow-400 text-xs sm:text-sm font-semibold">★ {{ card.rating }}</p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap items-center gap-1 mt-2 sm:mt-3">
+                            {% if not type == 'Watching' %}
+                            <a href="{% url 'change' card.mid 'watching' %}">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-gray-100 text-xs px-2 py-1 rounded">Watching</button>
+                            </a>
+                            {% endif %}
+                            {% if not type == 'Plan' %}
+                            <a href="{% url 'change' card.mid 'plan' %}">
+                                <button class="bg-green-500 hover:bg-green-600 text-gray-100 text-xs px-2 py-1 rounded">Plan</button>
+                            </a>
+                            {% endif %}
+                            {% if not type == 'Drop' %}
+                            <a href="{% url 'change' card.mid 'drop' %}">
+                                <button class="bg-gray-700 hover:bg-gray-600 text-gray-100 text-xs px-2 py-1 rounded">Dropped</button>
+                            </a>
+                            {% endif %}
+                            {% if not type == 'Hold' %}
+                            <a href="{% url 'change' card.mid 'hold' %}">
+                                <button class="bg-yellow-500 hover:bg-yellow-600 text-gray-100 text-xs px-2 py-1 rounded">On Hold</button>
+                            </a>
+                            {% endif %}
+                            {% if not type == 'Completed' %}
+                            <a href="{% url 'change' card.mid 'completed' %}">
+                                <button class="bg-purple-500 hover:bg-purple-600 text-gray-100 text-xs px-2 py-1 rounded">Completed</button>
+                            </a>
+                            {% endif %}
+                            <a href="{{ card.link }}" class="text-blue-400 hover:underline text-xs">Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Section (40%) -->
+                <div class="p-4 hidden sm:block">
+                    <p class="text-sm text-gray-200 line-clamp-3">{{ card.overview }}</p>
+                </div>
+            </div>
+        </td>
+
+        {% if forloop.counter|divisibleby:2 and not forloop.last %}
+        </tr><tr class="grid grid-cols-1 sm:table-row sm:grid-cols-2 gap-4">
+        {% endif %}
+        {% endfor %}
+    </tr>
+    </tbody>
+</table>
+{% else %}
+<h5 class="text-xl text-center">Your watchlist is empty</h5>
+{% endif %}
+
+{% endblock %}
